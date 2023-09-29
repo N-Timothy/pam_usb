@@ -66,67 +66,58 @@ static FILE *pusb_pad_open_device(t_pusb_options *opts, const char *mnt_point,
 
 static FILE *pusb_pad_open_system(t_pusb_options *opts, const char *user,
                                   const char *mode) {
-  FILE *f;
-  struct passwd *user_ent = NULL;
-  struct stat sb;
-  char device_name[128];
-  char *device_name_ptr = device_name;
+  //  FILE *f;
+  //  struct passwd *user_ent = NULL;
+  //  struct stat sb;
+  //  char device_name[128];
+  //  char *device_name_ptr = device_name;
 
-  printf("user: %s\n", user);
-
-  // if (!(user_ent = getpwnam(user)) || !(user_ent->pw_dir)) {
-  log_error("Unable to retrieve information for user \"%s\": %s\n", user,
-            strerror(errno));
+  //  if (!(user_ent = getpwnam(user)) || !(user_ent->pw_dir)) {
+  //  log_error("Unable to retrieve information for user \"%s\": %s\n", user,
+  //            strerror(errno));
   return (0);
-  //}
-  printf("halo1");
-
-  char path[(sizeof(user_ent->pw_dir) + sizeof(opts->system_pad_directory) +
-             sizeof(device_name) + 1)];
-  memset(path, 0x00, sizeof(path));
-
-  printf("halo2");
-
-  snprintf(path, sizeof(path), "%s/%s", user_ent->pw_dir,
-           opts->system_pad_directory);
-  if (stat(path, &sb) != 0) {
-    log_debug("Directory %s does not exist, creating one.\n", path);
-    if (mkdir(path, S_IRUSR | S_IWUSR | S_IXUSR) != 0) {
-      log_debug("Unable to create directory %s: %s\n", path, strerror(errno));
-      return (NULL);
-    }
-
-    if (chown(path, user_ent->pw_uid, user_ent->pw_gid) != 0) {
-      log_error("Unable to chown directory %s: %s\n", path, strerror(errno));
-    }
-
-    chmod(path, S_IRUSR | S_IWUSR | S_IXUSR);
-  }
-
-  printf("halo3");
-  /* change slashes in device name to underscores */
-  snprintf(device_name, sizeof(opts->device.name), "%s", opts->device.name);
-  while (*device_name_ptr) {
-    if ('/' == *device_name_ptr) {
-      *device_name_ptr = '_';
-    }
-
-    device_name_ptr++;
-  }
-
-  printf("halo4");
-
-  memset(path, 0x00, sizeof(path));
-  snprintf(path, sizeof(path), "%s/%s/%s.pad", user_ent->pw_dir,
-           opts->system_pad_directory, device_name);
-  f = fopen(path, mode);
-  printf("halo5");
-  if (!f) {
-    log_debug("Cannot open system file: %s\n", strerror(errno));
-    return (NULL);
-  }
-  printf("halo6");
-  return (f);
+  //  }
+  //  char path[(sizeof(user_ent->pw_dir) + sizeof(opts->system_pad_directory) +
+  //             sizeof(device_name) + 1)];
+  //  memset(path, 0x00, sizeof(path));
+  //
+  //  snprintf(path, sizeof(path), "%s/%s", user_ent->pw_dir,
+  //           opts->system_pad_directory);
+  //  if (stat(path, &sb) != 0) {
+  //    log_debug("Directory %s does not exist, creating one.\n", path);
+  //    if (mkdir(path, S_IRUSR | S_IWUSR | S_IXUSR) != 0) {
+  //      log_debug("Unable to create directory %s: %s\n", path,
+  //      strerror(errno)); return (NULL);
+  //    }
+  //
+  //    if (chown(path, user_ent->pw_uid, user_ent->pw_gid) != 0) {
+  //      log_error("Unable to chown directory %s: %s\n", path,
+  //      strerror(errno));
+  //    }
+  //
+  //    chmod(path, S_IRUSR | S_IWUSR | S_IXUSR);
+  //  }
+  //
+  //  /* change slashes in device name to underscores */
+  //  snprintf(device_name, sizeof(opts->device.name), "%s", opts->device.name);
+  //  while (*device_name_ptr) {
+  //    if ('/' == *device_name_ptr) {
+  //      *device_name_ptr = '_';
+  //    }
+  //
+  //    device_name_ptr++;
+  //  }
+  //
+  //
+  //  memset(path, 0x00, sizeof(path));
+  //  snprintf(path, sizeof(path), "%s/%s/%s.pad", user_ent->pw_dir,
+  //           opts->system_pad_directory, device_name);
+  //  f = fopen(path, mode);
+  //  if (!f) {
+  //    log_debug("Cannot open system file: %s\n", strerror(errno));
+  //    return (NULL);
+  //  }
+  //  return (f);
 }
 
 static int pusb_pad_protect(const char *user, int fd) {
@@ -196,7 +187,7 @@ static void pusb_pad_update(t_pusb_options *opts, const char *volume,
     return;
   }
 
-  log_info("Regenerating new pads...\n");
+  // log_info("Regenerating new pads...\n");
   if (!(f_device = pusb_pad_open_device(opts, volume, user, "w+"))) {
     log_error("Unable to update pads.\n");
     return;
@@ -204,7 +195,7 @@ static void pusb_pad_update(t_pusb_options *opts, const char *volume,
   pusb_pad_protect(user, fileno(f_device));
 
   if (!(f_system = pusb_pad_open_system(opts, user, "w+"))) {
-    log_error("Unable to update pads.\n");
+    //  log_error("Unable to update pads.\n");
     fclose(f_device);
     return;
   }
@@ -265,10 +256,7 @@ static int pusb_pad_compare(t_pusb_options *opts, const char *volume,
   int retval;
   size_t bytes_read;
 
-  printf("test1\n");
   f_system = pusb_pad_open_system(opts, user, "r");
-
-  printf("f_system: %p\n", f_system);
 
   if (!f_system) {
     return (1);
@@ -278,8 +266,6 @@ static int pusb_pad_compare(t_pusb_options *opts, const char *volume,
     fclose(f_system);
     return (0);
   }
-
-  printf("test3\n");
 
   log_debug("Loading device pad...\n");
   bytes_read =
@@ -322,11 +308,8 @@ int pusb_pad_check(t_pusb_options *opts, UDisksClient *udisks,
     return (0);
   }
 
-  printf("volume->mount_point: %s\n", volume->mount_point);
-
   retval = pusb_pad_compare(opts, volume->mount_point, user);
 
-  printf("retval: %d\n", retval);
   if (retval) {
     pusb_pad_update(opts, volume->mount_point, user);
   } else {

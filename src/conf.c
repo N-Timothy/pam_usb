@@ -184,9 +184,10 @@ int pusb_conf_parse(const char *file, t_pusb_options *opts, const char *user,
   }
 
   for (int currentDevice = 0; currentDevice < 10; currentDevice++) {
-    log_error("DBG: currentDevice: %d, strnlen: %d, value: %s\n", currentDevice,
-              strnlen(device_list[currentDevice], 128),
-              device_list[currentDevice]);
+    // log_error("DBG: currentDevice: %d, strnlen: %d, value: %s\n",
+    // currentDevice,
+    //          strnlen(device_list[currentDevice], 128),
+    //          device_list[currentDevice]);
     if (device_list[currentDevice] == NULL ||
         strnlen(device_list[currentDevice], 128) == 0) {
       continue;
@@ -196,9 +197,10 @@ int pusb_conf_parse(const char *file, t_pusb_options *opts, const char *user,
             strnlen(device_list[currentDevice], 128));
     pusb_conf_parse_device(opts, doc, currentDevice,
                            device_list[currentDevice]);
-    log_error("DBG: found device\n");
-    log_error("DBG:     name: %s\n", opts->device_list[currentDevice].name);
-    log_error("DBG:     vendor: %s\n", opts->device_list[currentDevice].vendor);
+    //   log_error("DBG: found device\n");
+    //   log_error("DBG:     name: %s\n",
+    //   opts->device_list[currentDevice].name); log_error("DBG:
+    //   vendor: %s\n", opts->device_list[currentDevice].vendor);
   }
 
   if (!pusb_conf_parse_options(opts, doc, user, service)) {
